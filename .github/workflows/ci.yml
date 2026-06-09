@@ -2,24 +2,37 @@ name: CI - Continuous Integration
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "main" ]
 
 jobs:
-  build:
+  validate-project:
+    name: Validate project files
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Validate HTML files
-      run: |
-        echo "Validando arquivos HTML..."
-        find site -name "*.html" -exec echo "Validado: {}" \;
+      - name: Check if site folder exists
+        run: |
+          echo "Validando estrutura do projeto..."
+          test -d site
 
-    - name: Linting simulation
-      run: |
-        echo "Rodando testes simples e verificações..."
-        [ -f site/index.html ] && echo "Arquivo index.html encontrado." || exit 1
+      - name: Check if index.html exists
+        run: |
+          echo "Verificando arquivo principal..."
+          test -f site/index.html
+
+      - name: Validate HTML content
+        run: |
+          echo "Validando conteúdo da página..."
+          grep -q "Guilherme Camargo" site/index.html
+          grep -q "Meu primeiro deploy automatizado" site/index.html
+
+      - name: Generate CI artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: validated-site-guilherme
+          path: site/
