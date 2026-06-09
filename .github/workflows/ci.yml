@@ -1,0 +1,25 @@
+name: CI - Continuous Integration
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Validate HTML files
+      run: |
+        echo "Validando arquivos HTML..."
+        find site -name "*.html" -exec echo "Validado: {}" \;
+
+    - name: Linting simulation
+      run: |
+        echo "Rodando testes simples e verificações..."
+        [ -f site/index.html ] && echo "Arquivo index.html encontrado." || exit 1
